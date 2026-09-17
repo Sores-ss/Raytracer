@@ -15,7 +15,11 @@ namespace RayTracer
     class Renderer
     {
         public:
+            Renderer(int samples = 1, int threads = 1);
             void render(const Scene &scene, int width, int height, IRenderOutput &out) const;
+        private:
+            int _samplesPerAxis;
+            int _threads;
     };
 
 }
