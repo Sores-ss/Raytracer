@@ -1,0 +1,18 @@
+#pragma once
+
+#include "core/Ray.hpp"
+#include "math/Point3D.hpp"
+#include "math/Vector3D.hpp"
+
+namespace RayTracer {
+
+class IPrimitive {
+public:
+    virtual ~IPrimitive() = default;
+    virtual bool hits(const Ray &ray, double &t) const = 0;
+    virtual Math::Vector3D getNormalAt(const Math::Point3D &point) const = 0;
+    virtual Math::Vector3D getColor() const = 0;
+    virtual void translate(const Math::Vector3D &offset) = 0;
+};
+
+}

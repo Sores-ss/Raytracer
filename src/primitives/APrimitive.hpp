@@ -1,0 +1,20 @@
+#pragma once
+
+#include "primitives/IPrimitive.hpp"
+
+namespace RayTracer {
+
+class APrimitive : public IPrimitive {
+public:
+    APrimitive(const Math::Point3D &origin, const Math::Vector3D &color);
+    ~APrimitive() override = default;
+
+    Math::Vector3D getColor() const override;
+    void translate(const Math::Vector3D &offset) override;
+
+protected:
+    Math::Point3D _origin;
+    Math::Vector3D _color;
+};
+
+}
