@@ -32,18 +32,21 @@ namespace RayTracer
             if (r > 2.0)
                 break;
             
-            double theta = std::atan2(z.x, z.z);
-            double phi = std::acos(std::max(-1.0, std::min(1.0, z.y / r)));
+            double theta = std::acos(std::clamp(z.z / r, -1.0, 1.0));
+            double phi = std::atan2(z.y, z.x);
             
             double rn = std::pow(r, POWER);
             double ntheta = POWER * theta;
             double nphi = POWER * phi;
             
+            double sin_ntheta = std::sin(ntheta);
+            double cos_ntheta = std::cos(ntheta);
             double sin_nphi = std::sin(nphi);
+            double cos_nphi = std::cos(nphi);
             z = Math::Vector3D(
-                rn * sin_nphi * std::sin(ntheta),
-                rn * std::cos(nphi),
-                rn * sin_nphi * std::cos(ntheta)
+                rn * sin_ntheta * cos_nphi,
+                rn * sin_ntheta * sin_nphi,
+                rn * cos_ntheta
             );
             
             z = z + p;
