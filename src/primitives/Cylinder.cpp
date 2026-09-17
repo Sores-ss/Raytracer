@@ -7,12 +7,18 @@
 
 #include "primitives/Cylinder.hpp"
 
+#include <algorithm>
 #include <cmath>
 
 namespace RayTracer
 {
 
     static const double CYL_DEG = 3.14159265358979323846 / 180.0;
+
+    static double absAverage(const Math::Vector3D &factors)
+    {
+        return (std::abs(factors.x) + std::abs(factors.y) + std::abs(factors.z)) / 3.0;
+    }
 
     Cylinder::Cylinder(const Math::Point3D &origin, double radius, const Math::Vector3D &axis, const Math::Vector3D &color) : APrimitive(origin, color), _radius(radius), _axis(axis.normalize()) 
     {
@@ -56,6 +62,12 @@ namespace RayTracer
         Math::Vector3D v = point - _origin;
         Math::Point3D proj = _origin + _axis * v.dot(_axis);
         return (point - proj).normalize();
+    }
+
+    void Cylinder::scale(const Math::Vector3D &factors)
+    {
+        APrimitive::scale(factors);
+        _radius *= std::max(0.01, absAverage(factors));
     }
 
     void Cylinder::rotateX(double deg)

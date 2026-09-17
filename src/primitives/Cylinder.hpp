@@ -18,6 +18,7 @@ namespace RayTracer
 
             bool hits(const Ray &ray, double &t) const override;
             Math::Vector3D getNormalAt(const Math::Point3D &point) const override;
+            void scale(const Math::Vector3D &factors) override;
             void rotateX(double deg) override;
             void rotateY(double deg) override;
             void rotateZ(double deg) override;
