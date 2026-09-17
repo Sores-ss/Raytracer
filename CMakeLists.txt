@@ -28,6 +28,9 @@ add_executable(raytracer
     src/primitives/Plane.cpp
     src/primitives/Cylinder.cpp
     src/primitives/Cone.cpp
+    src/primitives/Triangle.cpp
+    src/primitives/ISdf.cpp
+    src/primitives/Mandelbulb.cpp
     src/lights/ALight.cpp
     src/lights/AmbientLight.cpp
     src/lights/DirectionalLight.cpp

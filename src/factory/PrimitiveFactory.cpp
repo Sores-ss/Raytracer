@@ -12,6 +12,12 @@
 #include "primitives/Cylinder.hpp"
 #include "primitives/Plane.hpp"
 #include "primitives/Sphere.hpp"
+#include "primitives/Triangle.hpp"
+#include "primitives/Mandelbulb.hpp"
+#include "primitives/Triangle.hpp"
+#include "primitives/Mandelbulb.hpp"
+#include "primitives/Triangle.hpp"
+#include "primitives/Mandelbulb.hpp"
 
 namespace RayTracer
 {
@@ -122,6 +128,39 @@ namespace RayTracer
             Math::Vector3D axis(asDouble(cfg["axis"]["x"]), asDouble(cfg["axis"]["y"]), asDouble(cfg["axis"]["z"]));
             Math::Vector3D color = readColor(cfg["color"]);
             auto primitive = std::make_unique<Cone>(Math::Point3D(x, y, z), angle, axis, color);
+            applyMaterial(*primitive, cfg);
+            return primitive;
+        }
+
+        if (type == "triangle") {
+            double x0 = asDouble(cfg["v0"]["x"]);
+            double y0 = asDouble(cfg["v0"]["y"]);
+            double z0 = asDouble(cfg["v0"]["z"]);
+            double x1 = asDouble(cfg["v1"]["x"]);
+            double y1 = asDouble(cfg["v1"]["y"]);
+            double z1 = asDouble(cfg["v1"]["z"]);
+            double x2 = asDouble(cfg["v2"]["x"]);
+            double y2 = asDouble(cfg["v2"]["y"]);
+            double z2 = asDouble(cfg["v2"]["z"]);
+            Math::Vector3D color = readColor(cfg["color"]);
+            auto primitive = std::make_unique<Triangle>(
+                Math::Point3D(x0, y0, z0),
+                Math::Point3D(x1, y1, z1),
+                Math::Point3D(x2, y2, z2),
+                color
+            );
+            applyMaterial(*primitive, cfg);
+            return primitive;
+        }
+
+        if (type == "mandelbulb") {
+            double x = asDouble(cfg["x"]);
+            double y = asDouble(cfg["y"]);
+            double z = asDouble(cfg["z"]);
+            double scale = cfg.exists("scale") ? asDouble(cfg["scale"]) : 1.0;
+            int iterations = cfg.exists("iterations") ? (int)asDouble(cfg["iterations"]) : 10;
+            Math::Vector3D color = readColor(cfg["color"]);
+            auto primitive = std::make_unique<Mandelbulb>(Math::Point3D(x, y, z), scale, iterations, color);
             applyMaterial(*primitive, cfg);
             return primitive;
         }

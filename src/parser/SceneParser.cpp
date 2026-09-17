@@ -142,6 +142,24 @@ namespace RayTracer
                 scene.addPrimitive(std::move(p));
             }
         }
+        if (prims.exists("triangles")) {
+            const libconfig::Setting &tris = prims["triangles"];
+            for (int i = 0; i < tris.getLength(); i++) {
+                auto p = PrimitiveFactory::create("triangle", tris[i]);
+                applyTranslation(*p, tris[i]);
+                applyRotation(*p, tris[i]);
+                scene.addPrimitive(std::move(p));
+            }
+        }
+        if (prims.exists("mandelbulbs")) {
+            const libconfig::Setting &bulbs = prims["mandelbulbs"];
+            for (int i = 0; i < bulbs.getLength(); i++) {
+                auto p = PrimitiveFactory::create("mandelbulb", bulbs[i]);
+                applyTranslation(*p, bulbs[i]);
+                applyRotation(*p, bulbs[i]);
+                scene.addPrimitive(std::move(p));
+            }
+        }
     }
 
     static void parseLights(const libconfig::Config &cfg, Scene &scene)
