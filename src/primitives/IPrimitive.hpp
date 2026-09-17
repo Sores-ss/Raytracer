@@ -22,8 +22,10 @@ namespace RayTracer
             virtual Math::Vector3D getColor() const = 0;
             virtual double getSpecularStrength() const = 0;
             virtual double getShininess() const = 0;
+            virtual double getReflectivity() const = 0;
             virtual void setSpecularStrength(double specular) = 0;
             virtual void setShininess(double shininess) = 0;
+            virtual void setReflectivity(double reflectivity) = 0;
             virtual void translate(const Math::Vector3D &offset) = 0;
             virtual void rotateX(double deg) = 0;
             virtual void rotateY(double deg) = 0;
