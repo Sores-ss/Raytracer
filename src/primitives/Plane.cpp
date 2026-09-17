@@ -30,4 +30,32 @@ namespace RayTracer
         return _normal;
     }
 
+    Math::Vector3D Plane::getColorAt(const Math::Point3D &point) const
+    {
+        if (!_hasCheckerboard)
+            return _color;
+        double ax = std::abs(_normal.x);
+        double ay = std::abs(_normal.y);
+        double az = std::abs(_normal.z);
+        double u;
+        double v;
+
+        if (ax >= ay && ax >= az) {
+            u = point.y;
+            v = point.z;
+        } else if (ay >= ax && ay >= az) {
+            u = point.x;
+            v = point.z;
+        } else {
+            u = point.x;
+            v = point.y;
+        }
+        int cu = static_cast<int>(std::floor(u / _checkerCellSize));
+        int cv = static_cast<int>(std::floor(v / _checkerCellSize));
+
+        if (((cu + cv) & 1) == 0)
+            return _color;
+        return _checkerColor;
+    }
+
 }
