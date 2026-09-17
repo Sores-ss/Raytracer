@@ -9,7 +9,8 @@ class ILight {
 public:
     virtual ~ILight() = default;
     virtual Math::Vector3D illuminate(const Math::Point3D &point, const Math::Vector3D &normal) const = 0;
-    virtual Math::Vector3D shadowDir() const = 0;
+    virtual Math::Vector3D shadowDir(const Math::Point3D &point) const = 0;
+    virtual double shadowMaxDistance(const Math::Point3D &point) const = 0;
 };
 
 }

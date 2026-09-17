@@ -24,12 +24,13 @@ void Renderer::render(const Scene &scene, int width, int height, IRenderOutput &
 
             Math::Vector3D light(0, 0, 0);
             for (const auto &l : scene.getLights()) {
-                Math::Vector3D sdir = l->shadowDir();
+                Math::Vector3D sdir = l->shadowDir(P);
                 if (sdir.length() > 1e-9) {
                     Ray shadowRay(P + normal * 1e-4, sdir);
                     double shadowT;
                     IPrimitive *shadowHit = nullptr;
-                    if (scene.hits(shadowRay, shadowT, shadowHit))
+                    if (scene.hits(shadowRay, shadowT, shadowHit)
+                        && shadowT < l->shadowMaxDistance(P))
                         continue;
                 }
                 light += l->illuminate(P, normal);

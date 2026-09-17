@@ -13,7 +13,6 @@ namespace RayTracer {
 
 static const double PI = 3.14159265358979323846;
 
-// libconfig stores integer literals as TypeInt; this handles both int and float values
 static double asDouble(const libconfig::Setting &s) {
     if (s.getType() == libconfig::Setting::TypeInt)
         return static_cast<int>(s);
@@ -107,15 +106,22 @@ static void parseLights(const libconfig::Config &cfg, Scene &scene) {
         return;
     const libconfig::Setting &lights = cfg.lookup("lights");
     if (lights.exists("ambient")) {
-        double intensity = (double)lights["ambient"];
-        scene.addLight(LightFactory::createAmbient(intensity));
+        const libconfig::Setting &amb = lights["ambient"];
+        if (amb.getType() == libconfig::Setting::TypeGroup)
+            scene.addLight(LightFactory::createAmbient(amb));
+        else
+            scene.addLight(LightFactory::createAmbient((double)amb));
     }
     if (lights.exists("directional")) {
         const libconfig::Setting &dirs = lights["directional"];
         for (int i = 0; i < dirs.getLength(); i++)
             scene.addLight(LightFactory::createDirectional(dirs[i]));
     }
-    // TODO: point lights
+    if (lights.exists("point")) {
+        const libconfig::Setting &pts = lights["point"];
+        for (int i = 0; i < pts.getLength(); i++)
+            scene.addLight(LightFactory::createPoint(pts[i]));
+    }
 }
 
 SceneParser::SceneParser(const std::string &path) : _path(path) {}

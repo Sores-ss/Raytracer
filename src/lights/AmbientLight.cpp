@@ -2,10 +2,10 @@
 
 namespace RayTracer {
 
-AmbientLight::AmbientLight(double intensity) : ALight(intensity) {}
+AmbientLight::AmbientLight(double intensity, Math::Vector3D color) : ALight(intensity, color) {}
 
 Math::Vector3D AmbientLight::illuminate(const Math::Point3D &, const Math::Vector3D &) const {
-    return Math::Vector3D(_intensity, _intensity, _intensity);
+    return _color * _intensity;
 }
 
 }

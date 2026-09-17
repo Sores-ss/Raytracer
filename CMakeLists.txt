@@ -31,6 +31,7 @@ add_executable(raytracer
     src/lights/ALight.cpp
     src/lights/AmbientLight.cpp
     src/lights/DirectionalLight.cpp
+    src/lights/PointLight.cpp
     src/parser/SceneParser.cpp
     src/factory/PrimitiveFactory.cpp
     src/factory/LightFactory.cpp

@@ -8,7 +8,6 @@
 
 namespace RayTracer {
 
-// libconfig stores integer literals as TypeInt; this handles both int and float coords
 static double asDouble(const libconfig::Setting &s) {
     if (s.getType() == libconfig::Setting::TypeInt)
         return static_cast<int>(s);
