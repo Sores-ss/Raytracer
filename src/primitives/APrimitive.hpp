@@ -11,6 +11,9 @@ public:
 
     Math::Vector3D getColor() const override;
     void translate(const Math::Vector3D &offset) override;
+    void rotateX(double deg) override;
+    void rotateY(double deg) override;
+    void rotateZ(double deg) override;
 
 protected:
     Math::Point3D _origin;

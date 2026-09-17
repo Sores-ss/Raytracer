@@ -9,6 +9,8 @@ public:
     ALight(double intensity);
     ~ALight() override = default;
 
+    Math::Vector3D shadowDir() const override;
+
 protected:
     double _intensity;
 };
