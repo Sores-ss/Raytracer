@@ -7,19 +7,40 @@
 
 #include "primitives/APrimitive.hpp"
 
+#include <algorithm>
 #include <cmath>
 
 namespace RayTracer
 {
     static const double APDEG = 3.14159265358979323846 / 180.0;
 
-    APrimitive::APrimitive(const Math::Point3D &origin, const Math::Vector3D &color) : _origin(origin), _color(color)
+    APrimitive::APrimitive(const Math::Point3D &origin, const Math::Vector3D &color) : _origin(origin), _color(color), _specularStrength(0.35), _shininess(48.0)
     {
     }
 
     Math::Vector3D APrimitive::getColor() const
     {
         return _color;
+    }
+
+    double APrimitive::getSpecularStrength() const
+    {
+        return _specularStrength;
+    }
+
+    double APrimitive::getShininess() const
+    {
+        return _shininess;
+    }
+
+    void APrimitive::setSpecularStrength(double specular)
+    {
+        _specularStrength = std::max(0.0, specular);
+    }
+
+    void APrimitive::setShininess(double shininess)
+    {
+        _shininess = std::max(1.0, shininess);
     }
 
     void APrimitive::translate(const Math::Vector3D &offset)
