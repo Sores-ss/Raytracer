@@ -7,6 +7,8 @@
 
 #include "core/Renderer.hpp"
 
+#include <algorithm>
+#include <cmath>
 #include <vector>
 #include <thread>
 #include <random>
@@ -23,6 +25,49 @@ namespace RayTracer
 
         std::vector<Math::Vector3D> buffer(width * height, Math::Vector3D(0, 0, 0));
 
+        auto shadeRay = [&](const Ray &r, const Camera &camera) {
+            double t;
+            IPrimitive *hit = nullptr;
+
+            if (!scene.hits(r, t, hit))
+                return Math::Vector3D(0, 0, 0);
+            Math::Point3D hitPoint = r.origin + r.direction * t;
+            Math::Vector3D normal = hit->getNormalAt(hitPoint).normalize();
+            Math::Vector3D viewDir = (camera.origin - hitPoint).normalize();
+            Math::Vector3D light(0, 0, 0);
+            const double specularStrength = hit->getSpecularStrength();
+            const double shininess = hit->getShininess();
+
+            for (const auto &l : scene.getLights()) {
+                Math::Vector3D sdir = l->shadowDir(hitPoint);
+                Math::Vector3D base = l->illuminate(hitPoint, normal);
+
+                if (sdir.length() <= 1e-9) {
+                    light += base;
+                    continue;
+                }
+                Ray shadowRay(hitPoint + normal * 1e-4, sdir);
+                double shadowT;
+                IPrimitive *shadowHit = nullptr;
+
+                if (scene.hits(shadowRay, shadowT, shadowHit) && shadowT < l->shadowMaxDistance(hitPoint))
+                    continue;
+                light += base;
+
+                Math::Vector3D lightDir = sdir.normalize();
+                double ndotl = std::max(0.0, normal.dot(lightDir));
+
+                if (ndotl <= 1e-9)
+                    continue;
+                Math::Vector3D reflectDir = (normal * (2.0 * normal.dot(lightDir)) - lightDir).normalize();
+                double spec = std::pow(std::max(0.0, reflectDir.dot(viewDir)), shininess) * specularStrength;
+                Math::Vector3D lightColor = base / ndotl;
+
+                light += lightColor * spec;
+            }
+            return light * hit->getColor();
+        };
+
         auto worker = [&](int id){
             std::mt19937 rng(static_cast<unsigned int>(std::chrono::high_resolution_clock::now().time_since_epoch().count()) + id);
             std::uniform_real_distribution<double> dist(0.0, 1.0);
@@ -33,27 +78,7 @@ namespace RayTracer
                         double u = static_cast<double>(x) / (width - 1);
                         double v = 1.0 - static_cast<double>(y) / (height - 1);
                         Ray r = cam.ray(u, v);
-                        double t;
-                        IPrimitive *hit = nullptr;
-                        if (!scene.hits(r, t, hit)) {
-                            accum = Math::Vector3D(0, 0, 0);
-                        } else {
-                            Math::Point3D P = r.origin + r.direction * t;
-                            Math::Vector3D normal = hit->getNormalAt(P);
-                            Math::Vector3D light(0, 0, 0);
-                            for (const auto &l : scene.getLights()) {
-                                Math::Vector3D sdir = l->shadowDir(P);
-                                if (sdir.length() > 1e-9) {
-                                    Ray shadowRay(P + normal * 1e-4, sdir);
-                                    double shadowT;
-                                    IPrimitive *shadowHit = nullptr;
-                                    if (scene.hits(shadowRay, shadowT, shadowHit) && shadowT < l->shadowMaxDistance(P))
-                                        continue;
-                                }
-                                light += l->illuminate(P, normal);
-                            }
-                            accum = light * hit->getColor();
-                        }
+                        accum = shadeRay(r, cam);
                     } else {
                         int ss = _samplesPerAxis;
                         for (int sy = 0; sy < ss; ++sy) {
@@ -61,26 +86,7 @@ namespace RayTracer
                                 double u = (x + (sx + dist(rng)) / static_cast<double>(ss)) / (width - 1);
                                 double v = 1.0 - (y + (sy + dist(rng)) / static_cast<double>(ss)) / (height - 1);
                                 Ray r = cam.ray(u, v);
-                                double t;
-                                IPrimitive *hit = nullptr;
-                                if (!scene.hits(r, t, hit)) {
-                                    continue;
-                                }
-                                Math::Point3D P = r.origin + r.direction * t;
-                                Math::Vector3D normal = hit->getNormalAt(P);
-                                Math::Vector3D light(0, 0, 0);
-                                for (const auto &l : scene.getLights()) {
-                                    Math::Vector3D sdir = l->shadowDir(P);
-                                    if (sdir.length() > 1e-9) {
-                                        Ray shadowRay(P + normal * 1e-4, sdir);
-                                        double shadowT;
-                                        IPrimitive *shadowHit = nullptr;
-                                        if (scene.hits(shadowRay, shadowT, shadowHit) && shadowT < l->shadowMaxDistance(P))
-                                            continue;
-                                    }
-                                    light += l->illuminate(P, normal);
-                                }
-                                accum += light * hit->getColor();
+                                accum += shadeRay(r, cam);
                             }
                         }
                         accum = accum / static_cast<double>(ss * ss);
