@@ -18,6 +18,10 @@ namespace RayTracer
             ~APrimitive() override = default;
 
             Math::Vector3D getColor() const override;
+            double getSpecularStrength() const override;
+            double getShininess() const override;
+            void setSpecularStrength(double specular) override;
+            void setShininess(double shininess) override;
             void translate(const Math::Vector3D &offset) override;
             void rotateX(double deg) override;
             void rotateY(double deg) override;
@@ -26,5 +30,7 @@ namespace RayTracer
         protected:
             Math::Point3D _origin;
             Math::Vector3D _color;
+            double _specularStrength;
+            double _shininess;
     };
 }
