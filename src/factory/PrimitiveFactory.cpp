@@ -1,6 +1,8 @@
 #include "factory/PrimitiveFactory.hpp"
 
 #include "core/Exception.hpp"
+#include "primitives/Cone.hpp"
+#include "primitives/Cylinder.hpp"
 #include "primitives/Plane.hpp"
 #include "primitives/Sphere.hpp"
 
@@ -41,6 +43,28 @@ std::unique_ptr<IPrimitive> PrimitiveFactory::create(const std::string &type,
         else throw Exception("unknown plane axis: " + axis);
         Math::Vector3D color = readColor(cfg["color"]);
         return std::make_unique<Plane>(origin, normal, color);
+    }
+    if (type == "cylinder") {
+        double x = asDouble(cfg["x"]);
+        double y = asDouble(cfg["y"]);
+        double z = asDouble(cfg["z"]);
+        double r = asDouble(cfg["r"]);
+        Math::Vector3D axis(asDouble(cfg["axis"]["x"]),
+                            asDouble(cfg["axis"]["y"]),
+                            asDouble(cfg["axis"]["z"]));
+        Math::Vector3D color = readColor(cfg["color"]);
+        return std::make_unique<Cylinder>(Math::Point3D(x, y, z), r, axis, color);
+    }
+    if (type == "cone") {
+        double x = asDouble(cfg["x"]);
+        double y = asDouble(cfg["y"]);
+        double z = asDouble(cfg["z"]);
+        double angle = asDouble(cfg["angle"]);
+        Math::Vector3D axis(asDouble(cfg["axis"]["x"]),
+                            asDouble(cfg["axis"]["y"]),
+                            asDouble(cfg["axis"]["z"]));
+        Math::Vector3D color = readColor(cfg["color"]);
+        return std::make_unique<Cone>(Math::Point3D(x, y, z), angle, axis, color);
     }
     throw Exception("unknown primitive type: " + type);
 }
