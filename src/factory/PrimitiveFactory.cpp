@@ -40,6 +40,8 @@ namespace RayTracer
             primitive.setSpecularStrength(asDouble(cfg["specular"]));
         if (cfg.exists("shininess"))
             primitive.setShininess(asDouble(cfg["shininess"]));
+        if (cfg.exists("reflectivity"))
+            primitive.setReflectivity(asDouble(cfg["reflectivity"]));
     }
 
     std::unique_ptr<IPrimitive> PrimitiveFactory::create(const std::string &type, const libconfig::Setting &cfg)
