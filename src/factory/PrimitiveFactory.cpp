@@ -34,6 +34,14 @@ namespace RayTracer
         return Math::Vector3D(r, g, b);
     }
 
+    static void applyMaterial(IPrimitive &primitive, const libconfig::Setting &cfg)
+    {
+        if (cfg.exists("specular"))
+            primitive.setSpecularStrength(asDouble(cfg["specular"]));
+        if (cfg.exists("shininess"))
+            primitive.setShininess(asDouble(cfg["shininess"]));
+    }
+
     std::unique_ptr<IPrimitive> PrimitiveFactory::create(const std::string &type, const libconfig::Setting &cfg)
     {
         if (type == "sphere") {
@@ -42,7 +50,9 @@ namespace RayTracer
             double z = asDouble(cfg["z"]);
             double r = asDouble(cfg["r"]);
             Math::Vector3D color = readColor(cfg["color"]);
-            return std::make_unique<Sphere>(Math::Point3D(x, y, z), r, color);
+            auto primitive = std::make_unique<Sphere>(Math::Point3D(x, y, z), r, color);
+            applyMaterial(*primitive, cfg);
+            return primitive;
         }
 
         if (type == "plane") {
@@ -65,7 +75,9 @@ namespace RayTracer
             else throw 
                 Exception("unknown plane axis: " + axis);
             Math::Vector3D color = readColor(cfg["color"]);
-            return std::make_unique<Plane>(origin, normal, color);
+            auto primitive = std::make_unique<Plane>(origin, normal, color);
+            applyMaterial(*primitive, cfg);
+            return primitive;
         }
 
         if (type == "cylinder") {
@@ -75,7 +87,9 @@ namespace RayTracer
             double r = asDouble(cfg["r"]);
             Math::Vector3D axis(asDouble(cfg["axis"]["x"]), asDouble(cfg["axis"]["y"]), asDouble(cfg["axis"]["z"]));
             Math::Vector3D color = readColor(cfg["color"]);
-            return std::make_unique<Cylinder>(Math::Point3D(x, y, z), r, axis, color);
+            auto primitive = std::make_unique<Cylinder>(Math::Point3D(x, y, z), r, axis, color);
+            applyMaterial(*primitive, cfg);
+            return primitive;
         }
 
         if (type == "cone") {
@@ -85,7 +99,9 @@ namespace RayTracer
             double angle = asDouble(cfg["angle"]);
             Math::Vector3D axis(asDouble(cfg["axis"]["x"]), asDouble(cfg["axis"]["y"]), asDouble(cfg["axis"]["z"]));
             Math::Vector3D color = readColor(cfg["color"]);
-            return std::make_unique<Cone>(Math::Point3D(x, y, z), angle, axis, color);
+            auto primitive = std::make_unique<Cone>(Math::Point3D(x, y, z), angle, axis, color);
+            applyMaterial(*primitive, cfg);
+            return primitive;
         }
         throw Exception("unknown primitive type: " + type);
     }
