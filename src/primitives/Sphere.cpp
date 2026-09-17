@@ -7,10 +7,16 @@
 
 #include "primitives/Sphere.hpp"
 
+#include <algorithm>
 #include <cmath>
 
 namespace RayTracer
 {
+
+    static double absAverage(const Math::Vector3D &factors)
+    {
+        return (std::abs(factors.x) + std::abs(factors.y) + std::abs(factors.z)) / 3.0;
+    }
 
     Sphere::Sphere(const Math::Point3D &center, double radius, const Math::Vector3D &color) : APrimitive(center, color), _radius(radius)
     {
@@ -50,6 +56,12 @@ namespace RayTracer
     Math::Vector3D Sphere::getNormalAt(const Math::Point3D &point) const
     {
         return (point - _origin).normalize();
+    }
+
+    void Sphere::scale(const Math::Vector3D &factors)
+    {
+        APrimitive::scale(factors);
+        _radius *= std::max(0.01, absAverage(factors));
     }
 
 }
