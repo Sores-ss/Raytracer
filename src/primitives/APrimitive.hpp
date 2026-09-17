@@ -20,8 +20,10 @@ namespace RayTracer
             Math::Vector3D getColor() const override;
             double getSpecularStrength() const override;
             double getShininess() const override;
+            double getReflectivity() const override;
             void setSpecularStrength(double specular) override;
             void setShininess(double shininess) override;
+            void setReflectivity(double reflectivity) override;
             void translate(const Math::Vector3D &offset) override;
             void rotateX(double deg) override;
             void rotateY(double deg) override;
@@ -32,5 +34,6 @@ namespace RayTracer
             Math::Vector3D _color;
             double _specularStrength;
             double _shininess;
+            double _reflectivity;
     };
 }
