@@ -14,13 +14,25 @@ namespace RayTracer
 {
     static const double APDEG = 3.14159265358979323846 / 180.0;
 
-    APrimitive::APrimitive(const Math::Point3D &origin, const Math::Vector3D &color) : _origin(origin), _color(color), _specularStrength(0.35), _shininess(48.0), _reflectivity(0.0)
+    APrimitive::APrimitive(const Math::Point3D &origin, const Math::Vector3D &color) : _origin(origin), _color(color), _specularStrength(0.35), _shininess(48.0), _reflectivity(0.0), _hasCheckerboard(false), _checkerColor(0, 0, 0), _checkerCellSize(1.0)
     {
     }
 
     Math::Vector3D APrimitive::getColor() const
     {
         return _color;
+    }
+
+    Math::Vector3D APrimitive::getColorAt(const Math::Point3D &point) const
+    {
+        if (!_hasCheckerboard)
+            return _color;
+        int cx = static_cast<int>(std::floor(point.x / _checkerCellSize));
+        int cz = static_cast<int>(std::floor(point.z / _checkerCellSize));
+
+        if (((cx + cz) & 1) == 0)
+            return _color;
+        return _checkerColor;
     }
 
     double APrimitive::getSpecularStrength() const
@@ -53,9 +65,26 @@ namespace RayTracer
         _reflectivity = std::clamp(reflectivity, 0.0, 1.0);
     }
 
+    void APrimitive::setCheckerboard(const Math::Vector3D &secondColor, double cellSize)
+    {
+        _checkerColor = secondColor;
+        _checkerCellSize = std::max(0.01, cellSize);
+        _hasCheckerboard = true;
+    }
+
+    void APrimitive::setCheckerboardEnabled(bool enabled)
+    {
+        _hasCheckerboard = enabled;
+    }
+
     void APrimitive::translate(const Math::Vector3D &offset)
     {
         _origin = _origin + offset;
+    }
+
+    void APrimitive::scale(const Math::Vector3D &factors)
+    {
+        _origin = Math::Point3D(_origin.x * factors.x, _origin.y * factors.y, _origin.z * factors.z);
     }
 
     void APrimitive::rotateX(double deg)

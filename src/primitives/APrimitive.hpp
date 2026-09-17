@@ -18,13 +18,17 @@ namespace RayTracer
             ~APrimitive() override = default;
 
             Math::Vector3D getColor() const override;
+            Math::Vector3D getColorAt(const Math::Point3D &point) const override;
             double getSpecularStrength() const override;
             double getShininess() const override;
             double getReflectivity() const override;
             void setSpecularStrength(double specular) override;
             void setShininess(double shininess) override;
             void setReflectivity(double reflectivity) override;
+            void setCheckerboard(const Math::Vector3D &secondColor, double cellSize) override;
+            void setCheckerboardEnabled(bool enabled) override;
             void translate(const Math::Vector3D &offset) override;
+            void scale(const Math::Vector3D &factors) override;
             void rotateX(double deg) override;
             void rotateY(double deg) override;
             void rotateZ(double deg) override;
@@ -35,5 +39,8 @@ namespace RayTracer
             double _specularStrength;
             double _shininess;
             double _reflectivity;
+            bool _hasCheckerboard;
+            Math::Vector3D _checkerColor;
+            double _checkerCellSize;
     };
 }
