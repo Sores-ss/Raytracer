@@ -14,7 +14,7 @@ namespace RayTracer
 {
     static const double APDEG = 3.14159265358979323846 / 180.0;
 
-    APrimitive::APrimitive(const Math::Point3D &origin, const Math::Vector3D &color) : _origin(origin), _color(color), _specularStrength(0.35), _shininess(48.0)
+    APrimitive::APrimitive(const Math::Point3D &origin, const Math::Vector3D &color) : _origin(origin), _color(color), _specularStrength(0.35), _shininess(48.0), _reflectivity(0.0)
     {
     }
 
@@ -33,6 +33,11 @@ namespace RayTracer
         return _shininess;
     }
 
+    double APrimitive::getReflectivity() const
+    {
+        return _reflectivity;
+    }
+
     void APrimitive::setSpecularStrength(double specular)
     {
         _specularStrength = std::max(0.0, specular);
@@ -41,6 +46,11 @@ namespace RayTracer
     void APrimitive::setShininess(double shininess)
     {
         _shininess = std::max(1.0, shininess);
+    }
+
+    void APrimitive::setReflectivity(double reflectivity)
+    {
+        _reflectivity = std::clamp(reflectivity, 0.0, 1.0);
     }
 
     void APrimitive::translate(const Math::Vector3D &offset)
