@@ -42,6 +42,26 @@ namespace RayTracer
             primitive.setShininess(asDouble(cfg["shininess"]));
         if (cfg.exists("reflectivity"))
             primitive.setReflectivity(asDouble(cfg["reflectivity"]));
+        if (cfg.exists("checkerboard")) {
+            const libconfig::Setting &checker = cfg["checkerboard"];
+            if (checker.getType() == libconfig::Setting::TypeBoolean) {
+                primitive.setCheckerboardEnabled(static_cast<bool>(checker));
+            } else {
+                bool enabled = true;
+                double cellSize = 1.0;
+                Math::Vector3D secondColor(0, 0, 0);
+
+                if (checker.exists("enabled"))
+                    enabled = static_cast<bool>(checker["enabled"]);
+                if (checker.exists("size"))
+                    cellSize = asDouble(checker["size"]);
+                if (checker.exists("color"))
+                    secondColor = readColor(checker["color"]);
+                primitive.setCheckerboardEnabled(enabled);
+                if (enabled)
+                    primitive.setCheckerboard(secondColor, cellSize);
+            }
+        }
     }
 
     std::unique_ptr<IPrimitive> PrimitiveFactory::create(const std::string &type, const libconfig::Setting &cfg)

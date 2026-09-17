@@ -78,6 +78,25 @@ namespace RayTracer
             prim.rotateZ(asDouble(r["z"]));
     }
 
+    static void applyScale(IPrimitive &prim, const libconfig::Setting &cfg)
+    {
+        if (!cfg.exists("scale"))
+            return;
+        const libconfig::Setting &s = cfg["scale"];
+
+        if (s.getType() == libconfig::Setting::TypeGroup) {
+            double sx = s.exists("x") ? asDouble(s["x"]) : 1.0;
+            double sy = s.exists("y") ? asDouble(s["y"]) : 1.0;
+            double sz = s.exists("z") ? asDouble(s["z"]) : 1.0;
+
+            prim.scale(Math::Vector3D(sx, sy, sz));
+        } else {
+            double uniform = asDouble(s);
+
+            prim.scale(Math::Vector3D(uniform, uniform, uniform));
+        }
+    }
+
     static void parsePrimitives(const libconfig::Config &cfg, Scene &scene)
     {
         if (!cfg.exists("primitives"))
@@ -89,6 +108,7 @@ namespace RayTracer
                 auto p = PrimitiveFactory::create("sphere", spheres[i]);
                 applyTranslation(*p, spheres[i]);
                 applyRotation(*p, spheres[i]);
+                applyScale(*p, spheres[i]);
                 scene.addPrimitive(std::move(p));
             }
         }
@@ -98,6 +118,7 @@ namespace RayTracer
                 auto p = PrimitiveFactory::create("plane", planes[i]);
                 applyTranslation(*p, planes[i]);
                 applyRotation(*p, planes[i]);
+                applyScale(*p, planes[i]);
                 scene.addPrimitive(std::move(p));
             }
         }
@@ -107,6 +128,7 @@ namespace RayTracer
                 auto p = PrimitiveFactory::create("cylinder", cyls[i]);
                 applyTranslation(*p, cyls[i]);
                 applyRotation(*p, cyls[i]);
+                applyScale(*p, cyls[i]);
                 scene.addPrimitive(std::move(p));
             }
         }
@@ -116,6 +138,7 @@ namespace RayTracer
                 auto p = PrimitiveFactory::create("cone", cones[i]);
                 applyTranslation(*p, cones[i]);
                 applyRotation(*p, cones[i]);
+                applyScale(*p, cones[i]);
                 scene.addPrimitive(std::move(p));
             }
         }
