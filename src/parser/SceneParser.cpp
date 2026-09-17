@@ -51,15 +51,6 @@ static void applyTranslation(IPrimitive &prim, const libconfig::Setting &cfg) {
     prim.translate(Math::Vector3D(asDouble(t["x"]), asDouble(t["y"]), asDouble(t["z"])));
 }
 
-static void applyRotation(IPrimitive &prim, const libconfig::Setting &cfg) {
-    if (!cfg.exists("rotation"))
-        return;
-    const libconfig::Setting &r = cfg["rotation"];
-    if (r.exists("x")) prim.rotateX(asDouble(r["x"]));
-    if (r.exists("y")) prim.rotateY(asDouble(r["y"]));
-    if (r.exists("z")) prim.rotateZ(asDouble(r["z"]));
-}
-
 static void parsePrimitives(const libconfig::Config &cfg, Scene &scene) {
     if (!cfg.exists("primitives"))
         return;
@@ -69,7 +60,6 @@ static void parsePrimitives(const libconfig::Config &cfg, Scene &scene) {
         for (int i = 0; i < spheres.getLength(); i++) {
             auto p = PrimitiveFactory::create("sphere", spheres[i]);
             applyTranslation(*p, spheres[i]);
-            applyRotation(*p, spheres[i]);
             scene.addPrimitive(std::move(p));
         }
     }
@@ -78,25 +68,6 @@ static void parsePrimitives(const libconfig::Config &cfg, Scene &scene) {
         for (int i = 0; i < planes.getLength(); i++) {
             auto p = PrimitiveFactory::create("plane", planes[i]);
             applyTranslation(*p, planes[i]);
-            applyRotation(*p, planes[i]);
-            scene.addPrimitive(std::move(p));
-        }
-    }
-    if (prims.exists("cylinders")) {
-        const libconfig::Setting &cyls = prims["cylinders"];
-        for (int i = 0; i < cyls.getLength(); i++) {
-            auto p = PrimitiveFactory::create("cylinder", cyls[i]);
-            applyTranslation(*p, cyls[i]);
-            applyRotation(*p, cyls[i]);
-            scene.addPrimitive(std::move(p));
-        }
-    }
-    if (prims.exists("cones")) {
-        const libconfig::Setting &cones = prims["cones"];
-        for (int i = 0; i < cones.getLength(); i++) {
-            auto p = PrimitiveFactory::create("cone", cones[i]);
-            applyTranslation(*p, cones[i]);
-            applyRotation(*p, cones[i]);
             scene.addPrimitive(std::move(p));
         }
     }

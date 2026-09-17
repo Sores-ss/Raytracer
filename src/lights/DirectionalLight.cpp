@@ -12,8 +12,4 @@ Math::Vector3D DirectionalLight::illuminate(const Math::Point3D &, const Math::V
     return Math::Vector3D(d, d, d);
 }
 
-Math::Vector3D DirectionalLight::shadowDir() const {
-    return _direction;
-}
-
 }
