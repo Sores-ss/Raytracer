@@ -1,31 +1,55 @@
+/*
+** EPITECH PROJECT, 2026
+** G-OOP-400-LIL-4-1-raytracer-7
+** File description:
+** Sphere
+*/
+
 #include "primitives/Sphere.hpp"
 
 #include <cmath>
 
-namespace RayTracer {
+namespace RayTracer
+{
 
-Sphere::Sphere(const Math::Point3D &center, double radius, const Math::Vector3D &color)
-    : APrimitive(center, color), _radius(radius) {}
+    Sphere::Sphere(const Math::Point3D &center, double radius, const Math::Vector3D &color) : APrimitive(center, color), _radius(radius)
+    {
+    }
 
-bool Sphere::hits(const Ray &ray, double &t) const {
-    Math::Vector3D oc = ray.origin - _origin;
-    // Quadratic: a*t^2 + b*t + c = 0
-    double a = ray.direction.dot(ray.direction);
-    double b = 2.0 * oc.dot(ray.direction);
-    double c = oc.dot(oc) - _radius * _radius;
-    double d = b * b - 4 * a * c;
-    if (d < 0)
+    bool Sphere::hits(const Ray &ray, double &t) const
+    {
+        double a;
+        double b;
+        double c;
+        double d;
+        double sqrtd;
+        double t0;
+        double t1;
+        Math::Vector3D oc = ray.origin - _origin;
+
+        a = ray.direction.dot(ray.direction);
+        b = 2.0 * oc.dot(ray.direction);
+        c = oc.dot(oc) - _radius * _radius;
+        d = b * b - 4 * a * c;
+        if (d < 0)
+            return false;
+        sqrtd = std::sqrt(d);
+        t0 = (-b - sqrtd) / (2 * a);
+        t1 = (-b + sqrtd) / (2 * a);
+        if (t0 > 1e-6) {
+            t = t0;
+            return true;
+        }
+        if (t1 > 1e-6) {
+            t = t1;
+            return true;
+        }
         return false;
-    double sqrtd = std::sqrt(d);
-    double t0 = (-b - sqrtd) / (2 * a);
-    double t1 = (-b + sqrtd) / (2 * a);
-    if (t0 > 1e-6) { t = t0; return true; }
-    if (t1 > 1e-6) { t = t1; return true; }
-    return false;
-}
+    }
 
-Math::Vector3D Sphere::getNormalAt(const Math::Point3D &point) const {
-    return (point - _origin).normalize();
-}
+    Math::Vector3D Sphere::getNormalAt(const Math::Point3D &point) const
+    {
+        return (point - _origin).normalize();
+    }
 
 }

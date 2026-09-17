@@ -8,13 +8,13 @@
 #include "output/SFMLOutput.hpp"
 #include "parser/SceneParser.hpp"
 
-static void printUsage(std::ostream &out) {
-    out << "USAGE: ./raytracer <SCENE_FILE> [--display|-d]\n"
-        << "    SCENE_FILE: scene configuration\n"
-        << "    --display, -d: open an SFML window and render live\n";
+static void printUsage(std::ostream &out)
+{
+    out << "USAGE: ./raytracer <SCENE_FILE> [--display|-d]\n" << "    SCENE_FILE: scene configuration\n" << "    --display, -d: open an SFML window and render live\n";
 }
 
-int main(int argc, char **argv) {
+int main(int argc, char **argv)
+{
     if (argc == 2 && (std::string(argv[1]) == "--help" || std::string(argv[1]) == "-h")) {
         printUsage(std::cout);
         return 0;
@@ -23,7 +23,6 @@ int main(int argc, char **argv) {
         printUsage(std::cerr);
         return 84;
     }
-
     bool display = false;
     if (argc == 3) {
         std::string flag(argv[2]);
@@ -34,7 +33,6 @@ int main(int argc, char **argv) {
             return 84;
         }
     }
-
     try {
         RayTracer::Scene scene = RayTracer::SceneParser(argv[1]).parse();
         int w = scene.getWidth();

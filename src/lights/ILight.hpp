@@ -1,16 +1,23 @@
+/*
+** EPITECH PROJECT, 2026
+** G-OOP-400-LIL-4-1-raytracer-7
+** File description:
+** ILight
+*/
+
 #pragma once
 
 #include "math/Point3D.hpp"
 #include "math/Vector3D.hpp"
 
-namespace RayTracer {
-
-class ILight {
-public:
-    virtual ~ILight() = default;
-    virtual Math::Vector3D illuminate(const Math::Point3D &point, const Math::Vector3D &normal) const = 0;
-    virtual Math::Vector3D shadowDir(const Math::Point3D &point) const = 0;
-    virtual double shadowMaxDistance(const Math::Point3D &point) const = 0;
-};
-
+namespace RayTracer
+{
+    class ILight
+    {
+        public:
+            virtual ~ILight() = default;
+            virtual Math::Vector3D illuminate(const Math::Point3D &point, const Math::Vector3D &normal) const = 0;
+            virtual Math::Vector3D shadowDir(const Math::Point3D &point) const = 0;
+            virtual double shadowMaxDistance(const Math::Point3D &point) const = 0;
+    };
 }
