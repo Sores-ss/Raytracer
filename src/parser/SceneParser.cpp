@@ -44,19 +44,32 @@ static void parseCamera(const libconfig::Config &cfg, Scene &scene) {
     scene.setCamera(c);
 }
 
+static void applyTranslation(IPrimitive &prim, const libconfig::Setting &cfg) {
+    if (!cfg.exists("translation"))
+        return;
+    const libconfig::Setting &t = cfg["translation"];
+    prim.translate(Math::Vector3D(asDouble(t["x"]), asDouble(t["y"]), asDouble(t["z"])));
+}
+
 static void parsePrimitives(const libconfig::Config &cfg, Scene &scene) {
     if (!cfg.exists("primitives"))
         return;
     const libconfig::Setting &prims = cfg.lookup("primitives");
     if (prims.exists("spheres")) {
         const libconfig::Setting &spheres = prims["spheres"];
-        for (int i = 0; i < spheres.getLength(); i++)
-            scene.addPrimitive(PrimitiveFactory::create("sphere", spheres[i]));
+        for (int i = 0; i < spheres.getLength(); i++) {
+            auto p = PrimitiveFactory::create("sphere", spheres[i]);
+            applyTranslation(*p, spheres[i]);
+            scene.addPrimitive(std::move(p));
+        }
     }
     if (prims.exists("planes")) {
         const libconfig::Setting &planes = prims["planes"];
-        for (int i = 0; i < planes.getLength(); i++)
-            scene.addPrimitive(PrimitiveFactory::create("plane", planes[i]));
+        for (int i = 0; i < planes.getLength(); i++) {
+            auto p = PrimitiveFactory::create("plane", planes[i]);
+            applyTranslation(*p, planes[i]);
+            scene.addPrimitive(std::move(p));
+        }
     }
 }
 
