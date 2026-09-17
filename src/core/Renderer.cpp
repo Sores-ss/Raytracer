@@ -71,7 +71,7 @@ namespace RayTracer
 
                 light += lightColor * spec;
             }
-            Math::Vector3D local = light * hit->getColor();
+            Math::Vector3D local = light * hit->getColorAt(hitPoint);
 
             if (reflectivity <= 1e-9 || depth >= maxDepth)
                 return local;
